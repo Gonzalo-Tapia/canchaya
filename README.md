@@ -21,4 +21,10 @@ Este proyecto fue desarrollado como parte de la práctica profesional para facil
 ## Tecnologías Utilizadas
 - HTML5
 - CSS3 (con CSS Grid, Flexbox y Variables CSS)
-- JavaScript (menú hamburguesa)
+- JavaScript (menú hamburguesa y conexión del formulario con la API)
+
+## Conexión con el backend
+El formulario de `reservar.html` usa la API del repositorio **canchaya-backend**
+(`js/reservar.js`): carga los complejos, muestra los horarios libres y envía la reserva.
+Para probarlo, levantar primero el backend con `python api.py` (puerto 5000) y abrir el
+sitio con Live Server o con `python -m http.server 5500`.

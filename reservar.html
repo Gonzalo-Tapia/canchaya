@@ -2,7 +2,8 @@
 <!-- =========================================================================
      PÁGINA: Reservar (reservar.html)
      RESPONSABLE: [LEA] Leandro Licata — Frontend / Formularios
-     QUÉ HACE: formulario de reserva con validación nativa de HTML5 (sin JS).
+     QUÉ HACE: formulario de reserva con validación nativa de HTML5. js/reservar.js
+     lo conecta con la API del backend (complejos, horarios libres y envío).
      El header/footer son la estructura común de [FED] Federico.
      ========================================================================= -->
 <html lang="es">
@@ -53,7 +54,7 @@
 
         <div class="campo">
           <label for="nombre">Nombre y apellido</label>
-          <input type="text" id="nombre" name="nombre"
+          <input type="text" id="nombre" name="nombre_cliente"
                  placeholder="Ej: Lionel Pérez" required minlength="3">
         </div>
 
@@ -66,20 +67,15 @@
           <div class="campo">
             <label for="telefono">Teléfono</label>
             <input type="tel" id="telefono" name="telefono"
-                   placeholder="261 123 4567" required>
+                   placeholder="261 123 4567" required minlength="6">
           </div>
         </div>
 
         <div class="campo">
           <label for="complejo">Complejo</label>
-          <select id="complejo" name="complejo" required>
-            <option value="">— Elegí un complejo —</option>
-            <option value="estadio5">Estadio 5 (Godoy Cruz)</option>
-            <option value="laredonda">La Redonda (Las Heras)</option>
-            <option value="golazo">Golazo Fútbol (Guaymallén)</option>
-            <option value="elpotrero">El Potrero (Ciudad)</option>
-            <option value="mundialf5">Mundial F5 (Maipú)</option>
-            <option value="labombonerita">La Bombonerita (Luján)</option>
+          <!-- Las opciones las carga js/reservar.js desde la API (GET /api/complejos). -->
+          <select id="complejo" name="id_complejo" required>
+            <option value="">Cargando complejos…</option>
           </select>
         </div>
 
@@ -90,13 +86,9 @@
           </div>
           <div class="campo">
             <label for="hora">Horario</label>
+            <!-- Se completa al elegir complejo y fecha, marcando los ocupados. -->
             <select id="hora" name="hora" required>
-              <option value="">— Elegí un horario —</option>
-              <option>18:00</option>
-              <option>19:00</option>
-              <option>20:00</option>
-              <option>21:00</option>
-              <option>22:00</option>
+              <option value="">— Elegí complejo y fecha —</option>
             </select>
           </div>
         </div>
@@ -114,6 +106,10 @@
         </div>
 
         <button type="submit" class="boton boton-primario">Confirmar reserva</button>
+
+        <!-- [LEA] Resultado del envío. role="status" hace que los lectores de
+             pantalla lo anuncien cuando cambia. -->
+        <div id="mensaje" class="mensaje" role="status" hidden></div>
       </form>
     </section>
   </main>
@@ -127,5 +123,6 @@
   </footer>
 
   <script src="js/menu.js"></script>
+  <script src="js/reservar.js"></script>
 </body>
 </html>

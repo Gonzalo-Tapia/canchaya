@@ -249,6 +249,22 @@ main {
 
 .fila { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 .formulario .boton { width: 100%; font-size: 1.05rem; }
+.formulario .boton:disabled { opacity: .6; cursor: wait; }
+
+/* Mensaje con el resultado de la reserva (lo muestra js/reservar.js).
+   El color del borde indica el tipo: éxito, aviso (lista de espera) o error. */
+.mensaje {
+  margin-top: 1.25rem;
+  padding: 1rem 1.1rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-borde);
+  border-left-width: 4px;
+  background-color: var(--color-fondo);
+}
+.mensaje-exito { border-left-color: var(--color-acento); }
+.mensaje-aviso { border-left-color: #f2c94c; }
+.mensaje-error { border-left-color: #ff6b6b; }
+.mensaje .boton { margin-top: .9rem; }
 
 /* ===== [GON] LISTADO DE COMPLEJOS ========================================= */
 .grilla-complejos {
