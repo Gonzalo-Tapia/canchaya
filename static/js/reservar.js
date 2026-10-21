@@ -2,14 +2,15 @@
    reservar.js — Conecta el formulario de reserva con la API del backend.
    Responsable: [LEA] Leandro Licata (Frontend / Formularios).
    -------------------------------------------------------------------------
-   El backend (repositorio canchaya-backend) se levanta con `python api.py` y
-   escucha en el puerto 5000. Esta página le pide los complejos y los horarios
-   libres, y le envía la reserva. Si el backend no responde, se avisa en pantalla.
+   La página la sirve el mismo servidor Flask del sitio (app.py), así que la API
+   se pide en la misma dirección (/api), sin CORS. Esta página le pide los
+   complejos y los horarios libres, y le envía la reserva. Si el servidor no
+   responde, se avisa en pantalla.
    La validación de HTML5 sigue funcionando: el evento "submit" solo se dispara
    cuando el navegador ya aceptó todos los campos.
    ------------------------------------------------------------------------- */
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "/api";
 
 const formulario     = document.querySelector(".formulario");
 const selectComplejo = document.querySelector("#complejo");

@@ -1,44 +1,17 @@
-<!DOCTYPE html>
-<!-- =========================================================================
-     PÁGINA: Reservar (reservar.html)
-     RESPONSABLE: [LEA] Leandro Licata — Frontend / Formularios
-     QUÉ HACE: formulario de reserva con validación nativa de HTML5. js/reservar.js
-     lo conecta con la API del backend (complejos, horarios libres y envío).
-     El header/footer son la estructura común de [FED] Federico.
-     ========================================================================= -->
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- [GUS] meta author -->
-  <meta name="author" content="Leandro Licata">
-  <meta name="description" content="Reservá tu cancha de fútbol 5 en CanchaYa.">
-  <title>Reservar — CanchaYa</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/estilos.css">
-</head>
+{# =========================================================================
+   PÁGINA: Reservar (reservar.html)
+   RESPONSABLE: [LEA] Leandro Licata — Frontend / Formularios
+   QUÉ HACE: formulario de reserva con validación nativa de HTML5. js/reservar.js
+   lo conecta con la API del servidor (complejos, horarios libres y envío).
+   El header/footer son la estructura común de [FED] Federico (base.html).
+   ========================================================================= #}
+{% extends "base.html" %}
 
-<body>
+{% block titulo %}Reservar — CanchaYa{% endblock %}
+{% block autor %}Leandro Licata{% endblock %}
+{% block descripcion %}Reservá tu cancha de fútbol 5 en CanchaYa.{% endblock %}
 
-  <!-- [FED] HEADER común -->
-  <header class="cabecera">
-    <div class="contenedor">
-      <a href="index.html" class="logo">Cancha<span>Ya</span></a>
-      <button class="hamburguesa" aria-label="Abrir menú">&#9776;</button>
-      <nav>
-        <ul class="menu">
-          <li><a href="index.html">Inicio</a></li>
-          <li><a href="complejos.html">Complejos</a></li>
-          <li><a href="reservar.html" class="activo">Reservar</a></li>
-          <li><a href="nosotros.html">Nosotros</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <main>
+{% block contenido %}
     <section class="encabezado-pagina">
       <div class="contenedor">
         <h1>Reservá tu <span>cancha</span></h1>
@@ -112,17 +85,8 @@
         <div id="mensaje" class="mensaje" role="status" hidden></div>
       </form>
     </section>
-  </main>
+{% endblock %}
 
-  <!-- [FED] FOOTER común -->
-  <footer class="pie">
-    <div class="contenedor">
-      <span>© 2026 CanchaYa — Proyecto académico ficticio.</span>
-      <span>Práctica Profesional I — Instituto Superior Manuel Belgrano</span>
-    </div>
-  </footer>
-
-  <script src="js/menu.js"></script>
-  <script src="js/reservar.js"></script>
-</body>
-</html>
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/reservar.js') }}"></script>
+{% endblock %}

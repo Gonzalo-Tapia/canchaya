@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{# =========================================================================
+   PLANTILLA BASE (base.html)
+   RESPONSABLE: [FED] Federico Cabrera — estructura común (header y footer)
+   Extraída a plantilla Jinja por [LEA] Leandro Licata para el parcial 2.
+   QUÉ HACE: todo lo que se repetía en las 4 páginas vive acá una sola vez.
+   Cada página hace {% extends "base.html" %} y completa los bloques:
+     titulo, autor, descripcion, contenido y scripts.
+   ========================================================================= #}
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="{% block autor %}Zonda Bytes{% endblock %}">
+  <meta name="description" content="{% block descripcion %}CanchaYa: reservá tu cancha de fútbol 5 en Mendoza.{% endblock %}">
+  <title>{% block titulo %}CanchaYa{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body>
+
+  <!-- [FED] HEADER común -->
+  <header class="cabecera">
+    <div class="contenedor">
+      <a href="{{ url_for('inicio') }}" class="logo">Cancha<span>Ya</span></a>
+      <button class="hamburguesa" aria-label="Abrir menú">&#9776;</button>
+      <nav>
+        <ul class="menu">
+          {# request.endpoint es el nombre de la función de la ruta actual:
+             así se marca solo el link "activo", sin repetirlo en cada página. #}
+          {% for endpoint, texto in [('inicio', 'Inicio'), ('complejos', 'Complejos'),
+                                     ('reservar', 'Reservar'), ('nosotros', 'Nosotros')] %}
+          <li><a href="{{ url_for(endpoint) }}"{% if request.endpoint == endpoint %} class="activo"{% endif %}>{{ texto }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <!-- [FED] FOOTER común -->
+  <footer class="pie">
+    <div class="contenedor">
+      <span>© 2026 CanchaYa — Proyecto académico ficticio.</span>
+      <span>Práctica Profesional I — Instituto Superior Manuel Belgrano</span>
+    </div>
+  </footer>
+
+  <!-- [FED] script del menú hamburguesa -->
+  <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

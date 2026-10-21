@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+~$*
+
+# Base de datos local (cada uno genera la suya) y variables de entorno
+*.db
+.env

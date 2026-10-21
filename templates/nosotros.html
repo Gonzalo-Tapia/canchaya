@@ -1,43 +1,16 @@
-<!DOCTYPE html>
-<!-- =========================================================================
-     PÁGINA: Nosotros (nosotros.html)
-     RESPONSABLE: [GUS] Gustavo Di Paola — Documentación / Git
-     QUÉ HACE: presenta al equipo y sus roles. Sirve de base para las "fichas
-     de desarrolladores" que van en el PDF. Contenido afinado con [GON].
-     ========================================================================= -->
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- [GUS] meta author -->
-  <meta name="author" content="Gustavo Di Paola">
-  <meta name="description" content="El equipo detrás de CanchaYa.">
-  <title>Nosotros — CanchaYa</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/estilos.css">
-</head>
+{# =========================================================================
+   PÁGINA: Nosotros (nosotros.html)
+   RESPONSABLE: [GUS] Gustavo Di Paola — Documentación / Git
+   QUÉ HACE: presenta al equipo y sus roles. Sirve de base para las "fichas
+   de desarrolladores" que van en el PDF. Contenido afinado con [GON].
+   ========================================================================= #}
+{% extends "base.html" %}
 
-<body>
+{% block titulo %}Nosotros — CanchaYa{% endblock %}
+{% block autor %}Gustavo Di Paola{% endblock %}
+{% block descripcion %}El equipo detrás de CanchaYa.{% endblock %}
 
-  <!-- [FED] HEADER común -->
-  <header class="cabecera">
-    <div class="contenedor">
-      <a href="index.html" class="logo">Cancha<span>Ya</span></a>
-      <button class="hamburguesa" aria-label="Abrir menú">&#9776;</button>
-      <nav>
-        <ul class="menu">
-          <li><a href="index.html">Inicio</a></li>
-          <li><a href="complejos.html">Complejos</a></li>
-          <li><a href="reservar.html">Reservar</a></li>
-          <li><a href="nosotros.html" class="activo">Nosotros</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <main>
+{% block contenido %}
     <section class="encabezado-pagina">
       <div class="contenedor">
         <h1>El <span>equipo</span></h1>
@@ -50,28 +23,28 @@
       <div class="grilla-equipo">
 
         <article class="miembro">
-          <img class="avatar" src="assets/images/equipo/federico.jpg" alt="Federico Cabrera">
+          <img class="avatar" src="{{ url_for('static', filename='assets/images/equipo/federico.jpg') }}" alt="Federico Cabrera">
           <h3>Federico Cabrera</h3>
           <p class="rol">Frontend / HTML</p>
           <p>Maquetó la estructura semántica, el header/footer comunes y la página de inicio.</p>
         </article>
 
         <article class="miembro">
-          <img class="avatar" src="assets/images/equipo/leandro.jpeg" alt="Leandro Licata">
+          <img class="avatar" src="{{ url_for('static', filename='assets/images/equipo/leandro.jpeg') }}" alt="Leandro Licata">
           <h3>Leandro Licata</h3>
           <p class="rol">Frontend / Formularios</p>
           <p>Desarrolló el formulario de reservas con validación HTML5.</p>
         </article>
 
         <article class="miembro">
-          <img class="avatar" src="assets/images/equipo/gonzalo.jpeg" alt="Gonzalo Tapia">
+          <img class="avatar" src="{{ url_for('static', filename='assets/images/equipo/gonzalo.jpeg') }}" alt="Gonzalo Tapia">
           <h3>Gonzalo Tapia</h3>
           <p class="rol">Contenido / UX</p>
           <p>Definió el contenido, el listado de complejos y las decisiones de experiencia de usuario.</p>
         </article>
 
         <article class="miembro">
-          <img class="avatar" src="assets/images/equipo/gustavo.jpeg" alt="Gustavo Di Paola">
+          <img class="avatar" src="{{ url_for('static', filename='assets/images/equipo/gustavo.jpeg') }}" alt="Gustavo Di Paola">
           <h3>Gustavo Di Paola</h3>
           <p class="rol">Documentación / Git</p>
           <p>Coordinó el repositorio en GitHub y la documentación del proyecto.</p>
@@ -79,16 +52,4 @@
 
       </div>
     </section>
-  </main>
-
-  <!-- [FED] FOOTER común -->
-  <footer class="pie">
-    <div class="contenedor">
-      <span>© 2026 CanchaYa — Proyecto académico ficticio.</span>
-      <span>Práctica Profesional I — Instituto Superior Manuel Belgrano</span>
-    </div>
-  </footer>
-
-  <script src="js/menu.js"></script>
-</body>
-</html>
+{% endblock %}
