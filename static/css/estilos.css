@@ -320,6 +320,21 @@ main {
 .miembro .rol { color: var(--color-acento); font-size: .9rem; font-weight: 600; }
 .miembro p { color: var(--color-texto-suave); font-size: .9rem; margin-top: .5rem; }
 
+/* ===== [FED] CUENTAS (login, registro y menú de usuario) ==================
+   Reutiliza .formulario/.campo de [LEA]; acá solo lo propio de las cuentas. */
+.formulario-cuenta { max-width: 480px; }
+.formulario-cuenta .mensaje { margin: 0 0 1.25rem; }
+.cuenta-alternativa { margin-top: 1rem; text-align: center; color: var(--color-texto-suave); }
+.cuenta-alternativa a { color: var(--color-acento); }
+.avisos { margin-top: 1rem; }
+.menu-usuario { color: var(--color-texto-suave); font-size: .95rem; }
+.form-salir { display: inline; }
+.boton-enlace {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font: inherit; color: inherit;
+}
+.boton-enlace:hover { color: var(--color-acento); }
+
 /* ===== [FED] ANIMACIÓN DE ENTRADA =========================================
    El hero aparece en cascada al cargar la página. */
 @keyframes aparecer {

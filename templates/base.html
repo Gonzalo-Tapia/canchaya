@@ -13,6 +13,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="{% block autor %}Zonda Bytes{% endblock %}">
   <meta name="description" content="{% block descripcion %}CanchaYa: reservá tu cancha de fútbol 5 en Mendoza.{% endblock %}">
+  {# [FED] Token CSRF para los POST por fetch (js/reservar.js lo manda en X-CSRFToken). #}
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>{% block titulo %}CanchaYa{% endblock %}</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,12 +38,35 @@
                                      ('reservar', 'Reservar'), ('nosotros', 'Nosotros')] %}
           <li><a href="{{ url_for(endpoint) }}"{% if request.endpoint == endpoint %} class="activo"{% endif %}>{{ texto }}</a></li>
           {% endfor %}
+          {# [FED] Cuentas: según haya sesión iniciada o no. #}
+          {% if usuario_actual %}
+          <li class="menu-usuario">Hola, {{ usuario_actual.nombre }}</li>
+          <li>
+            <form action="{{ url_for('cuentas.logout') }}" method="post" class="form-salir">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="boton-enlace">Salir</button>
+            </form>
+          </li>
+          {% else %}
+          <li><a href="{{ url_for('cuentas.login') }}"{% if request.endpoint == 'cuentas.login' %} class="activo"{% endif %}>Ingresar</a></li>
+          <li><a href="{{ url_for('cuentas.registro') }}"{% if request.endpoint == 'cuentas.registro' %} class="activo"{% endif %}>Crear cuenta</a></li>
+          {% endif %}
         </ul>
       </nav>
     </div>
   </header>
 
   <main>
+    {# [FED] Avisos de una sola vez (flash): registro, login, logout. #}
+    {% with avisos = get_flashed_messages(with_categories=true) %}
+    {% if avisos %}
+    <div class="contenedor avisos">
+      {% for categoria, texto in avisos %}
+      <p class="mensaje mensaje-{{ categoria }}" role="status">{{ texto }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
     {% block contenido %}{% endblock %}
   </main>
 

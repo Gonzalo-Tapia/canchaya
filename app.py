@@ -14,6 +14,7 @@ import secrets
 from flask import Flask, render_template
 
 from api import api
+from cuentas import cuentas   # [FED] registro, login y logout
 from modelos import db, iniciar_base, Complejo
 
 app = Flask(__name__)
@@ -25,6 +26,7 @@ app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
 
 iniciar_base()
 app.register_blueprint(api)
+app.register_blueprint(cuentas)
 
 
 # Cada pedido abre la conexión a la base y la cierra al terminar.
