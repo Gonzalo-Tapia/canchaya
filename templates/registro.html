@@ -1,0 +1,56 @@
+{# =========================================================================
+   PÁGINA: Crear cuenta (registro.html)
+   RESPONSABLE: [FED] Federico Cabrera — Cuentas
+   QUÉ HACE: alta de usuario con los campos del modelo Usuario (nombre,
+   email, clave). cuentas.py valida, guarda el hash e inicia la sesión.
+   ========================================================================= #}
+{% extends "base.html" %}
+
+{% block titulo %}Crear cuenta — CanchaYa{% endblock %}
+{% block autor %}Federico Cabrera{% endblock %}
+{% block descripcion %}Creá tu cuenta en CanchaYa.{% endblock %}
+
+{% block contenido %}
+    <section class="encabezado-pagina">
+      <div class="contenedor">
+        <h1>Creá tu <span>cuenta</span></h1>
+        <p>Registrate para que tus reservas queden a tu nombre.</p>
+      </div>
+    </section>
+
+    <section class="contenedor">
+      <form class="formulario formulario-cuenta" action="{{ url_for('cuentas.registro') }}" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        {% if errores %}
+        <div class="mensaje mensaje-error" role="alert">
+          {% for e in errores %}<p>{{ e }}</p>{% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="campo">
+          <label for="nombre">Nombre y apellido</label>
+          <input type="text" id="nombre" name="nombre" value="{{ datos.nombre }}"
+                 placeholder="Ej: Lionel Pérez" required minlength="3" autocomplete="name">
+        </div>
+        <div class="campo">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" value="{{ datos.email }}"
+                 placeholder="vos@ejemplo.com" required autocomplete="email">
+        </div>
+        <div class="fila">
+          <div class="campo">
+            <label for="clave">Contraseña</label>
+            <input type="password" id="clave" name="clave" required minlength="8" autocomplete="new-password">
+          </div>
+          <div class="campo">
+            <label for="clave2">Repetir contraseña</label>
+            <input type="password" id="clave2" name="clave2" required minlength="8" autocomplete="new-password">
+          </div>
+        </div>
+
+        <button type="submit" class="boton">Crear cuenta</button>
+        <p class="cuenta-alternativa">¿Ya tenés cuenta? <a href="{{ url_for('cuentas.login') }}">Ingresá</a>.</p>
+      </form>
+    </section>
+{% endblock %}
