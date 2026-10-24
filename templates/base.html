@@ -40,7 +40,8 @@
           {% endfor %}
           {# [FED] Cuentas: según haya sesión iniciada o no. #}
           {% if usuario_actual %}
-          <li class="menu-usuario">Hola, {{ usuario_actual.nombre }}</li>
+          {# Solo el primer nombre; en móvil se lee como "zona de cuenta" (CSS). #}
+          <li class="menu-usuario">Hola, {{ usuario_actual.nombre.split()[0] }}</li>
           <li>
             <form action="{{ url_for('cuentas.logout') }}" method="post" class="form-salir">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

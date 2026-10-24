@@ -327,11 +327,21 @@ main {
 .cuenta-alternativa { margin-top: 1rem; text-align: center; color: var(--color-texto-suave); }
 .cuenta-alternativa a { color: var(--color-acento); }
 .avisos { margin-top: 1rem; }
-.menu-usuario { color: var(--color-texto-suave); font-size: .95rem; }
+/* Zona de cuenta en el menú: no se ve como un link más. */
+.menu-usuario {
+  color: var(--color-texto-suave);
+  font-size: .8rem;
+  font-weight: 400;
+  opacity: .9;
+  pointer-events: none;
+}
 .form-salir { display: inline; }
+/* Mismo color que .menu a (antes salía blanco por color: inherit). */
 .boton-enlace {
-  background: none; border: 0; padding: 0; cursor: pointer;
-  font: inherit; color: inherit;
+  background: none; border: 0; padding: .4rem 0; cursor: pointer;
+  font: inherit; font-weight: 600;
+  color: var(--color-texto-suave);
+  transition: color .2s ease;
 }
 .boton-enlace:hover { color: var(--color-acento); }
 
@@ -375,6 +385,13 @@ main {
     padding: 1rem 1.25rem; gap: 1rem;
   }
   .menu.abierto { display: flex; } /* el JS agrega esta clase al hacer clic */
+  /* [FED] Zona de cuenta en móvil: línea arriba y saludo más chico. */
+  .menu-usuario {
+    border-top: 1px solid var(--color-borde);
+    margin-top: .25rem;
+    padding-top: .85rem;
+    font-size: .75rem;
+  }
 }
 @media (max-width: 600px) {
   .fila { grid-template-columns: 1fr; }
