@@ -1,0 +1,86 @@
+{# =========================================================================
+   PÁGINA: Mis reservas (mis_reservas.html)
+   RESPONSABLE: [FED] Federico Cabrera — Cuentas / Mis reservas
+   QUÉ HACE: lista las reservas del usuario logueado (mis_reservas.py).
+   Las próximas se pueden editar (jugadores y comentarios) o cancelar.
+   ========================================================================= #}
+{% extends "base.html" %}
+
+{% block titulo %}Mis reservas — CanchaYa{% endblock %}
+{% block autor %}Federico Cabrera{% endblock %}
+{% block descripcion %}Tus reservas de canchas en CanchaYa.{% endblock %}
+
+{% macro estado_etiqueta(estado) %}
+  {% set textos = {'confirmada': 'Confirmada', 'espera': 'En lista de espera', 'cancelada': 'Cancelada'} %}
+  <span class="estado-reserva estado-{{ estado }}">{{ textos.get(estado, estado) }}</span>
+{% endmacro %}
+
+{% block contenido %}
+    <section class="encabezado-pagina">
+      <div class="contenedor">
+        <h1>Mis <span>reservas</span></h1>
+        <p>Acá ves tus turnos. Podés cambiar los jugadores o los comentarios, o cancelar si no vas.</p>
+      </div>
+    </section>
+
+    <section class="contenedor mis-reservas">
+      <h2>Próximas</h2>
+      {% if proximas %}
+      <ul class="lista-reservas">
+        {% for r in proximas %}
+        <li class="tarjeta-reserva">
+          <header class="tarjeta-reserva-cabecera">
+            <h3>{{ r.complejo.nombre }}</h3>
+            {{ estado_etiqueta(r.estado) }}
+          </header>
+          <p class="tarjeta-reserva-dato"><time datetime="{{ r.fecha.isoformat() }}T{{ r.hora }}">{{ r.fecha.strftime('%d/%m/%Y') }} · {{ r.hora }} h</time> · {{ r.complejo.zona }}</p>
+
+          <details class="tarjeta-reserva-editar">
+            <summary>Ver detalle y editar</summary>
+            <p class="tarjeta-reserva-dato">A nombre de {{ r.nombre_cliente }} · {{ r.email }} · {{ r.telefono }}</p>
+            <form class="formulario" action="{{ url_for('mis_reservas.editar', id_reserva=r.id) }}" method="post">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <div class="campo">
+                <label for="jugadores-{{ r.id }}">Jugadores</label>
+                <input type="number" id="jugadores-{{ r.id }}" name="jugadores" value="{{ r.jugadores }}"
+                       min="{{ min_jugadores }}" max="{{ max_jugadores }}" required>
+              </div>
+              <div class="campo">
+                <label for="comentarios-{{ r.id }}">Comentarios</label>
+                <textarea id="comentarios-{{ r.id }}" name="comentarios" maxlength="500" rows="3">{{ r.comentarios }}</textarea>
+              </div>
+              <button type="submit" class="boton boton-primario">Guardar cambios</button>
+            </form>
+          </details>
+
+          <form action="{{ url_for('mis_reservas.cancelar', id_reserva=r.id) }}" method="post" class="form-cancelar"
+                onsubmit="return confirm('¿Seguro que querés cancelar esta reserva?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="boton boton-secundario boton-peligro">Cancelar reserva</button>
+          </form>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <div class="mensaje mensaje-aviso">
+        <p>No tenés reservas próximas.</p>
+        <a href="{{ url_for('reservar') }}" class="boton boton-primario">Reservar una cancha</a>
+      </div>
+      {% endif %}
+
+      {% if anteriores %}
+      <h2>Anteriores y canceladas</h2>
+      <ul class="lista-reservas lista-reservas-pasadas">
+        {% for r in anteriores %}
+        <li class="tarjeta-reserva">
+          <header class="tarjeta-reserva-cabecera">
+            <h3>{{ r.complejo.nombre }}</h3>
+            {{ estado_etiqueta(r.estado) }}
+          </header>
+          <p class="tarjeta-reserva-dato">{{ r.fecha.strftime('%d/%m/%Y') }} · {{ r.hora }} h · {{ r.jugadores }} jugadores</p>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </section>
+{% endblock %}
