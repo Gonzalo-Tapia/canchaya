@@ -146,13 +146,23 @@ function ofrecerEspera(texto) {
 }
 
 
-// 10) Envía la reserva con POST /api/reservas y muestra el resultado.
+// 10) Cabeceras del POST. El token CSRF lo deja el servidor en un
+//     <meta name="csrf-token"> de base.html; sin él, flask-wtf rechaza el envío.
+function cabecerasPost() {
+  const cabeceras = { "Content-Type": "application/json" };
+  const metaCsrf = document.querySelector('meta[name="csrf-token"]');
+  if (metaCsrf) cabeceras["X-CSRFToken"] = metaCsrf.content;
+  return cabeceras;
+}
+
+
+// 11) Envía la reserva con POST /api/reservas y muestra el resultado.
 async function enviarReserva(aceptarEspera) {
   botonEnviar.disabled = true;  // evita reservas duplicadas por doble clic
   try {
     const { ok, status, datos } = await pedirApi("/reservas", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: cabecerasPost(),
       body: JSON.stringify(leerFormulario(aceptarEspera))
     });
     if (ok) {
@@ -171,7 +181,7 @@ async function enviarReserva(aceptarEspera) {
 }
 
 
-// 11) Conexión de los eventos y carga inicial.
+// 12) Conexión de los eventos y carga inicial.
 inputFecha.min = hoy();
 selectComplejo.addEventListener("change", actualizarHorarios);
 inputFecha.addEventListener("change", actualizarHorarios);

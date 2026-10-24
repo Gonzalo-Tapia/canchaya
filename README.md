@@ -36,6 +36,8 @@ por un servidor web Flask con base de datos.
 
 ```
 app.py            # Servidor Flask: rutas de las páginas
+modelos.py        # Base de datos (peewee + SQLite) y lógica de horarios
+api.py            # API JSON bajo /api (complejos, disponibilidad, reservas)
 templates/        # Plantillas Jinja (base.html + una por página)
 static/css/       # Estilos
 static/js/        # Lógica de cliente
@@ -55,5 +57,6 @@ pip install -r requirements.txt
 python app.py
 ```
 
-El sitio queda en `http://localhost:5000`. Ya no se abre con Live Server: las páginas son
+El sitio queda en `http://localhost:5000`. La primera vez se crea sola la base `canchaya.db`
+con los complejos de ejemplo; para empezar de cero, alcanza con borrarla. Ya no se abre con Live Server: las páginas son
 plantillas Jinja y solo se ven bien servidas por Flask.
