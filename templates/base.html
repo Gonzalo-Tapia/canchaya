@@ -41,7 +41,8 @@
           {# [FED] Cuentas: según haya sesión iniciada o no. #}
           {% if usuario_actual %}
           {# Solo el primer nombre; en móvil se lee como "zona de cuenta" (CSS). #}
-          <li class="menu-usuario">Hola, {{ usuario_actual.nombre.split()[0] }}</li>
+          {# Mis reservas: el saludo es el link a la zona de cuenta. #}
+          <li class="menu-usuario"><a href="{{ url_for('mis_reservas.listar') }}" title="Mis reservas"{% if request.endpoint == 'mis_reservas.listar' %} class="activo"{% endif %}>Hola, {{ usuario_actual.nombre.split()[0] }}</a></li>
           <li>
             <form action="{{ url_for('cuentas.logout') }}" method="post" class="form-salir">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -58,7 +59,7 @@
   </header>
 
   <main>
-    {# [FED] Avisos de una sola vez (flash): registro, login, logout. #}
+    {# [FED] Avisos de una sola vez (flash): cuentas y mis reservas. #}
     {% with avisos = get_flashed_messages(with_categories=true) %}
     {% if avisos %}
     <div class="contenedor avisos">

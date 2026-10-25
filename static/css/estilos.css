@@ -21,6 +21,8 @@
   --color-acento:       #6ee87a;  /* verde césped, color de marca */
   --color-acento-fuerte:#3fbf52;  /* hover del acento */
   --color-borde:        #2c3a2e;
+  --color-peligro:      #ff6b6b;  /* errores y cancelar */
+  --color-aviso:        #f2c94c;  /* avisos y lista de espera */
 
   --fuente-titulo: "Anton", sans-serif;    /* títulos */
   --fuente-texto:  "Archivo", sans-serif;  /* texto */
@@ -262,8 +264,8 @@ main {
   background-color: var(--color-fondo);
 }
 .mensaje-exito { border-left-color: var(--color-acento); }
-.mensaje-aviso { border-left-color: #f2c94c; }
-.mensaje-error { border-left-color: #ff6b6b; }
+.mensaje-aviso { border-left-color: var(--color-aviso); }
+.mensaje-error { border-left-color: var(--color-peligro); }
 .mensaje .boton { margin-top: .9rem; }
 
 /* ===== [GON] LISTADO DE COMPLEJOS ========================================= */
@@ -327,14 +329,11 @@ main {
 .cuenta-alternativa { margin-top: 1rem; text-align: center; color: var(--color-texto-suave); }
 .cuenta-alternativa a { color: var(--color-acento); }
 .avisos { margin-top: 1rem; }
-/* Zona de cuenta en el menú: no se ve como un link más. */
-.menu-usuario {
-  color: var(--color-texto-suave);
-  font-size: .8rem;
-  font-weight: 400;
-  opacity: .9;
-  pointer-events: none;
-}
+/* Zona de cuenta en el menú: el saludo es el link a Mis reservas, más
+   chico que el resto para que no se lea como un link de sección más.
+   (Ya no lleva pointer-events: none, porque ahora se tiene que poder tocar.) */
+.menu-usuario { opacity: .9; }
+.menu .menu-usuario a { font-size: .8rem; font-weight: 400; }
 .form-salir { display: inline; }
 /* Mismo color que .menu a (antes salía blanco por color: inherit). */
 .boton-enlace {
@@ -344,6 +343,30 @@ main {
   transition: color .2s ease;
 }
 .boton-enlace:hover { color: var(--color-acento); }
+
+/* ===== [FED] MIS RESERVAS ================================================
+   Tarjetas de reservas del usuario; reutiliza .formulario, .campo y .mensaje. */
+.mis-reservas h2 { margin: 2rem 0 1rem; }
+.lista-reservas { list-style: none; display: grid; gap: 1rem; }
+.tarjeta-reserva {
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1.25rem;
+}
+.tarjeta-reserva-cabecera { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.tarjeta-reserva-dato { color: var(--color-texto-suave); margin-top: .4rem; }
+.tarjeta-reserva-editar { margin-top: .9rem; }
+.tarjeta-reserva-editar summary { cursor: pointer; color: var(--color-acento); font-weight: 600; }
+.tarjeta-reserva-editar .formulario { margin-top: .9rem; max-width: none; padding: 0; background: none; border: 0; }
+.form-cancelar { margin-top: .9rem; }
+.boton-peligro { color: var(--color-peligro); border-color: var(--color-peligro); }
+.boton-peligro:hover { background-color: var(--color-peligro); color: var(--color-fondo); }
+.estado-reserva { font-size: .8rem; font-weight: 700; padding: .2rem .7rem; border-radius: 999px; border: 1px solid; }
+.estado-confirmada { color: var(--color-acento); }
+.estado-espera { color: var(--color-aviso); }
+.estado-cancelada { color: var(--color-texto-suave); }
+.lista-reservas-pasadas .tarjeta-reserva { opacity: .75; }
 
 /* ===== [FED] ANIMACIÓN DE ENTRADA =========================================
    El hero aparece en cascada al cargar la página. */
@@ -390,8 +413,8 @@ main {
     border-top: 1px solid var(--color-borde);
     margin-top: .25rem;
     padding-top: .85rem;
-    font-size: .75rem;
   }
+  .menu .menu-usuario a { font-size: .75rem; }
 }
 @media (max-width: 600px) {
   .fila { grid-template-columns: 1fr; }
