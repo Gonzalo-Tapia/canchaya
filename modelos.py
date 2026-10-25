@@ -29,6 +29,7 @@ DIAS_DE_ANTICIPACION = 60  # hasta cuántos días adelante se puede reservar
 
 CONFIRMADA = "confirmada"
 EN_ESPERA = "espera"
+CANCELADA = "cancelada"  # la cancela el usuario desde Mis reservas ([FED])
 
 
 class ModeloBase(Model):
@@ -65,7 +66,7 @@ class Reserva(ModeloBase):
     hora = CharField()                     # "HH:MM"
     jugadores = IntegerField()
     comentarios = TextField(default="")
-    estado = CharField(default=CONFIRMADA)  # CONFIRMADA o EN_ESPERA
+    estado = CharField(default=CONFIRMADA)  # CONFIRMADA, EN_ESPERA o CANCELADA
     creada = DateTimeField(default=datetime.now)
 
 
