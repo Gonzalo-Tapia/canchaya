@@ -17,11 +17,10 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 
 from api import MIN_JUGADORES, MAX_JUGADORES   # mismos límites que la API de [LEA]
 from cuentas import csrf_valido
-from modelos import db, Reserva, CONFIRMADA, EN_ESPERA, ahora_en_mendoza
+from modelos import db, Reserva, CONFIRMADA, EN_ESPERA, CANCELADA, ahora_en_mendoza
 
 mis_reservas = Blueprint("mis_reservas", __name__)
 
-CANCELADA = "cancelada"
 LARGO_MAXIMO_COMENTARIOS = 500  # el mismo que valida api.py
 
 
