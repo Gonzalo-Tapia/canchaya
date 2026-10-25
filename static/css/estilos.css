@@ -21,6 +21,8 @@
   --color-acento:       #6ee87a;  /* verde césped, color de marca */
   --color-acento-fuerte:#3fbf52;  /* hover del acento */
   --color-borde:        #2c3a2e;
+  --color-peligro:      #ff6b6b;  /* errores y cancelar */
+  --color-aviso:        #f2c94c;  /* avisos y lista de espera */
 
   --fuente-titulo: "Anton", sans-serif;    /* títulos */
   --fuente-texto:  "Archivo", sans-serif;  /* texto */
@@ -262,8 +264,8 @@ main {
   background-color: var(--color-fondo);
 }
 .mensaje-exito { border-left-color: var(--color-acento); }
-.mensaje-aviso { border-left-color: #f2c94c; }
-.mensaje-error { border-left-color: #ff6b6b; }
+.mensaje-aviso { border-left-color: var(--color-aviso); }
+.mensaje-error { border-left-color: var(--color-peligro); }
 .mensaje .boton { margin-top: .9rem; }
 
 /* ===== [GON] LISTADO DE COMPLEJOS ========================================= */
@@ -358,11 +360,11 @@ main {
 .tarjeta-reserva-editar summary { cursor: pointer; color: var(--color-acento); font-weight: 600; }
 .tarjeta-reserva-editar .formulario { margin-top: .9rem; max-width: none; padding: 0; background: none; border: 0; }
 .form-cancelar { margin-top: .9rem; }
-.boton-peligro { color: #ff6b6b; border-color: #ff6b6b; }
-.boton-peligro:hover { background-color: #ff6b6b; color: var(--color-fondo); }
+.boton-peligro { color: var(--color-peligro); border-color: var(--color-peligro); }
+.boton-peligro:hover { background-color: var(--color-peligro); color: var(--color-fondo); }
 .estado-reserva { font-size: .8rem; font-weight: 700; padding: .2rem .7rem; border-radius: 999px; border: 1px solid; }
 .estado-confirmada { color: var(--color-acento); }
-.estado-espera { color: #f2c94c; }
+.estado-espera { color: var(--color-aviso); }
 .estado-cancelada { color: var(--color-texto-suave); }
 .lista-reservas-pasadas .tarjeta-reserva { opacity: .75; }
 

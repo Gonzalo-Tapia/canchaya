@@ -53,8 +53,7 @@
             </form>
           </details>
 
-          <form action="{{ url_for('mis_reservas.cancelar', id_reserva=r.id) }}" method="post" class="form-cancelar"
-                onsubmit="return confirm('¿Seguro que querés cancelar esta reserva?');">
+          <form action="{{ url_for('mis_reservas.cancelar', id_reserva=r.id) }}" method="post" class="form-cancelar">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="boton boton-secundario boton-peligro">Cancelar reserva</button>
           </form>
@@ -83,4 +82,8 @@
       </ul>
       {% endif %}
     </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/mis_reservas.js') }}"></script>
 {% endblock %}

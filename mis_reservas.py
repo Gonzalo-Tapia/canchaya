@@ -29,7 +29,8 @@ def requiere_sesion():
     """Sin sesión, manda a /login y vuelve acá después de ingresar."""
     if g.usuario is None:
         flash("Ingresá a tu cuenta para ver tus reservas.", "aviso")
-        return redirect(url_for("cuentas.login", siguiente=request.path))
+        # Siempre volvemos al listado: editar/cancelar solo aceptan POST.
+        return redirect(url_for("cuentas.login", siguiente=url_for("mis_reservas.listar")))
     return None
 
 
@@ -124,5 +125,8 @@ def cancelar(id_reserva):
             reserva.save()
             if estaba_confirmada:
                 promover_espera(reserva)
-        flash("Cancelaste la reserva. Si había alguien en espera, el turno pasó a su nombre.", "exito")
+        if estaba_confirmada:
+            flash("Cancelaste la reserva. Si había alguien en espera, el turno pasó a su nombre.", "exito")
+        else:
+            flash("Cancelaste la reserva. Saliste de la lista de espera.", "exito")
     return redirect(url_for("mis_reservas.listar"))
