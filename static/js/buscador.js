@@ -101,3 +101,109 @@ formulario.addEventListener("submit", (evento) => evento.preventDefault());
 
 // Primera pasada al cargar, para que aparezca el resumen ("6 complejos").
 aplicarFiltros();
+
+// =========================================================================
+// 6) CARACTERÍSTICA INTELIGENTE: búsqueda por voz.
+//    El navegador pasa la voz a texto (Web Speech API) y interpretar()
+//    entiende la frase y la convierte en filtros: zona, precio, orden y texto.
+// =========================================================================
+
+// Palabras que no aportan a la búsqueda y se descartan ("quiero una cancha en...").
+const PALABRAS_DE_RELLENO = [
+  "quiero", "busco", "buscame", "mostrame", "dame", "necesito",
+  "un", "una", "unos", "unas", "el", "la", "los", "las", "de", "del",
+  "en", "con", "que", "sea", "sean", "y", "a", "por", "para",
+  "cancha", "canchas", "complejo", "complejos", "futbol",
+  "hasta", "menos", "mas", "maximo", "pesos", "hora", "precio", "mil",
+  "barata", "baratas", "barato", "baratos", "economica", "economicas",
+  "cara", "caras", "caro", "caros",
+];
+
+function interpretar(frase) {
+  let resto = normalizar(frase);
+
+  // a) ZONA: si la frase nombra alguna de las zonas del select, la elegimos.
+  selectZona.value = "";
+  for (const opcion of selectZona.options) {
+    const zona = normalizar(opcion.value);
+    if (zona && resto.includes(zona)) {
+      selectZona.value = opcion.value;
+      resto = resto.replace(zona, " ");   // ya la usamos: la sacamos de la frase
+    }
+  }
+
+  // b) PRECIO: "hasta 18 mil", "menos de 18000", "18.000".
+  //    Primero juntamos "18.000" o "18,000" en "18000".
+  resto = resto.replace(/(\d)[.,](\d{3})/g, "$1$2");
+  const precio = resto.match(/\b(\d+)\s*(mil)?\b/);
+  let numero = precio ? Number(precio[1]) * (precio[2] ? 1000 : 1) : 0;
+  if (numero >= 1000) {
+    rangoPrecio.value = numero;           // el rango solo lo ajusta entre su mín y máx
+    resto = resto.replace(precio[0], " ");
+  } else {
+    rangoPrecio.value = rangoPrecio.max;  // un "5" suelto (ej. "Estadio 5") no es un precio
+  }
+
+  // c) ORDEN: "la más barata" → menor precio; "la más cara" → mayor precio.
+  if (/\b(barat|economic)/.test(resto)) {
+    selectOrden.value = "menor";
+  } else if (/\bcar(a|o)s?\b/.test(resto)) {
+    selectOrden.value = "mayor";
+  } else {
+    selectOrden.value = "";
+  }
+
+  // d) TEXTO: lo que sobra, sin relleno ni números, va al buscador.
+  const palabras = resto
+    .split(/\s+/)
+    .filter((p) => p && !PALABRAS_DE_RELLENO.includes(p) && !/^\d+$/.test(p));
+  campoTexto.value = palabras.join(" ");
+
+  // e) Aplicamos y mostramos qué se escuchó, para que el usuario lo vea.
+  aplicarFiltros();
+  resumen.textContent = "Escuché: \"" + frase + "\" · " + resumen.textContent;
+}
+
+// El reconocimiento de voz existe en Chrome y Edge (con prefijo webkit).
+// Si el navegador no lo tiene (ej. Firefox), el botón queda oculto y listo.
+const botonVoz = document.querySelector("#boton-voz");
+const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (Reconocimiento) {
+  const reconocedor = new Reconocimiento();
+  reconocedor.lang = "es-AR";          // español de Argentina
+  reconocedor.interimResults = false;  // solo el resultado final, no el parcial
+  reconocedor.maxAlternatives = 1;
+
+  botonVoz.hidden = false;
+
+  // Un clic empieza a escuchar; otro clic mientras escucha, corta.
+  botonVoz.addEventListener("click", () => {
+    if (botonVoz.classList.contains("escuchando")) {
+      reconocedor.stop();
+    } else {
+      reconocedor.start();
+    }
+  });
+
+  reconocedor.addEventListener("start", () => {
+    botonVoz.classList.add("escuchando");   // el CSS lo pinta de rojo
+    resumen.textContent = "Escuchando…";
+  });
+
+  reconocedor.addEventListener("result", (evento) => {
+    interpretar(evento.results[0][0].transcript);
+  });
+
+  reconocedor.addEventListener("error", (evento) => {
+    resumen.textContent = evento.error === "not-allowed"
+      ? "Para buscar por voz, permití el uso del micrófono."
+      : "No te escuché bien. Probá de nuevo.";
+  });
+
+  reconocedor.addEventListener("end", () => {
+    botonVoz.classList.remove("escuchando");
+    // Si terminó sin escuchar nada, volvemos al resumen normal.
+    if (resumen.textContent === "Escuchando…") aplicarFiltros();
+  });
+}
