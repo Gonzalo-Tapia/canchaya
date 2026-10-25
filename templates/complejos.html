@@ -3,8 +3,9 @@
    RESPONSABLE: [GON] Gonzalo Tapia — Contenido / UX
    QUÉ HACE: listado de complejos en tarjetas. Los datos vienen de la base
    (modelos.py, [LEA]): la ruta /complejos pasa la lista "complejos" y acá
-   se arma una tarjeta por cada uno. Los data-* los usa buscador.js para
-   filtrar. La estructura común es de [FED] Federico.
+   se arma una tarjeta por cada uno. Arriba va el buscador con filtros; los
+   data-* de cada tarjeta los usa buscador.js para filtrar y ordenar.
+   La estructura común es de [FED] Federico.
    ========================================================================= #}
 {% extends "base.html" %}
 
@@ -20,8 +21,48 @@
       </div>
     </section>
 
-    <!-- [GON] grilla de complejos: una tarjeta por cada complejo de la base -->
     <section class="contenedor">
+
+      {# [GON] Buscador y filtros. La lógica está en js/buscador.js. #}
+      {% set precios = complejos|map(attribute='precio_hora')|list %}
+      <form class="buscador" id="buscador" role="search">
+
+        <div class="campo buscador-texto">
+          <label for="filtro-texto">Buscar</label>
+          <div class="buscador-entrada">
+            <input type="search" id="filtro-texto" placeholder="Nombre o característica (ej: techadas)" autocomplete="off">
+            <button type="button" class="boton-voz" id="boton-voz" aria-label="Buscar por voz" hidden>🎤</button>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="filtro-zona">Zona</label>
+          <select id="filtro-zona">
+            <option value="">Todas</option>
+            {% for zona in complejos|map(attribute='zona')|unique|sort %}
+            <option value="{{ zona }}">{{ zona }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="filtro-precio">Hasta $ <output id="valor-precio" for="filtro-precio">{{ "{:,}".format(precios|max).replace(",", ".") }}</output></label>
+          <input type="range" id="filtro-precio" min="{{ precios|min }}" max="{{ precios|max }}" step="500" value="{{ precios|max }}">
+        </div>
+
+        <div class="campo">
+          <label for="filtro-orden">Ordenar</label>
+          <select id="filtro-orden">
+            <option value="">Sin orden</option>
+            <option value="menor">Menor precio</option>
+            <option value="mayor">Mayor precio</option>
+          </select>
+        </div>
+
+      </form>
+      <p class="buscador-resumen" id="resumen" aria-live="polite"></p>
+
+      <!-- [GON] grilla de complejos: una tarjeta por cada complejo de la base -->
       <div class="grilla-complejos">
 
         {% for complejo in complejos %}
@@ -41,5 +82,12 @@
         {% endfor %}
 
       </div>
+
+      <p class="sin-resultados" id="sin-resultados" hidden>No hay complejos con esos filtros. Probá con otra zona o subí el precio.</p>
+
     </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/buscador.js') }}"></script>
 {% endblock %}
