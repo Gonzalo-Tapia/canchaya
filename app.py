@@ -18,7 +18,11 @@ from cuentas import cuentas   # [FED] registro, login y logout
 from mis_reservas import mis_reservas   # [FED] Mis reservas
 from modelos import db, iniciar_base, Complejo
 
+from seguridad import iniciar_seguridad   # [GUS] CSRF, CSP, limiter...
+
 app = Flask(__name__)
+
+iniciar_seguridad(app)
 
 # La clave firma la cookie de sesión y los tokens CSRF. En Render se carga
 # como variable de entorno SECRET_KEY. Si falta (en la PC de cada uno), se

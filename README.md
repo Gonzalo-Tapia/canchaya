@@ -18,6 +18,7 @@ por un servidor web Flask con base de datos.
 - **Complejos:** Listado de complejos deportivos disponibles.
 - **Nosotros:** Información sobre el equipo de desarrollo.
 - **Diseño Responsive:** Adaptabilidad a dispositivos móviles con menú de navegación colapsable.
+- **Seguridad:** Protección contra CSRF, XSS, clickjacking y fuerza bruta (ver la sección [Seguridad](#seguridad)).
 
 ## Equipo de Desarrollo
 - Federico Cabrera (Frontend / HTML)
@@ -38,6 +39,7 @@ por un servidor web Flask con base de datos.
 app.py            # Servidor Flask: rutas de las páginas
 modelos.py        # Base de datos (peewee + SQLite) y lógica de horarios
 api.py            # API JSON bajo /api (complejos, disponibilidad, reservas)
+seguridad.py      # Medidas de seguridad: CSRF, cabeceras, límite de intentos
 templates/        # Plantillas Jinja (base.html + una por página)
 static/css/       # Estilos
 static/js/        # Lógica de cliente
@@ -60,3 +62,54 @@ python app.py
 El sitio queda en `http://localhost:5000`. La primera vez se crea sola la base `canchaya.db`
 con los complejos de ejemplo; para empezar de cero, alcanza con borrarla. Ya no se abre con Live Server: las páginas son
 plantillas Jinja y solo se ven bien servidas por Flask.
+
+## Seguridad
+
+Todas las medidas están en `seguridad.py`, que se activa con una sola llamada,
+`iniciar_seguridad(app)`, desde `app.py` (después de definir la `SECRET_KEY`). Los objetos
+`csrf` y `limiter` quedan disponibles para importar desde otros archivos
+(`from seguridad import limiter`).
+
+| Medida | Protege contra | Cómo está implementada |
+|---|---|---|
+| Tokens CSRF | Formularios o pedidos falsos enviados desde otro sitio | `flask-wtf` (`CSRFProtect`). Los formularios llevan el campo oculto `csrf_token` y `reservar.js` envía el token en la cabecera `X-CSRFToken` |
+| Content-Security-Policy | XSS (ejecución de scripts inyectados) | Solo se permiten scripts y estilos del propio sitio, más Google Fonts para tipografías |
+| `X-Frame-Options: DENY` y `frame-ancestors 'none'` | Clickjacking (el sitio dentro de un iframe ajeno) | Cabeceras agregadas a todas las respuestas |
+| Otras cabeceras | Sniffing de contenido y filtrado de datos | `X-Content-Type-Options: nosniff`, `Referrer-Policy: same-origin`, `Permissions-Policy` (solo se permite el micrófono, para la búsqueda por voz) |
+| Límite de intentos | Fuerza bruta en login, registro y reservas | `flask-limiter`, con un límite por IP en cada ruta sensible |
+| Cookie de sesión | Robo o uso indebido de la sesión | `HttpOnly`, `SameSite=Lax` y `Secure` (solo en Render, que usa https) |
+| Escape de plantillas | XSS por datos del usuario | Jinja escapa automáticamente el texto que se muestra en las páginas |
+| `SECRET_KEY` | Falsificación de sesiones y tokens | Se carga como variable de entorno en Render; en local se genera una al azar |
+
+### Límites de intentos
+
+Se aplican con `@limiter.limit(...)` debajo del decorador de cada ruta:
+
+| Ruta | Límite |
+|---|---|
+| `POST /login` | 5 por minuto |
+| `POST /registro` | 3 por minuto |
+| `POST /api/reservas` | 10 por minuto |
+
+Al superar el límite, el sitio responde con un error 429: JSON para las rutas de `/api` y
+un mensaje ("Demasiados intentos, esperá un minuto") para el resto de las páginas.
+
+### Errores de seguridad
+
+- **Token CSRF inválido o ausente:** respuesta 400. En `/api` devuelve JSON con el motivo
+  del error; en las demás páginas muestra un mensaje y vuelve a la página anterior.
+- **Render:** como los pedidos llegan a través de un proxy, `ProxyFix` hace que el límite de
+  intentos se aplique a la IP real de cada usuario y no a todos juntos.
+
+### Pruebas realizadas
+
+| Medida | Prueba | Resultado |
+|---|---|---|
+| Cabeceras | `curl.exe -I http://localhost:5000/` | Aparecen las cinco cabeceras de seguridad |
+| CSP | Revisión de la consola (F12) en todas las páginas, con y sin sesión | Sin errores de Content Security Policy |
+| Clickjacking | Un `.html` suelto con `<iframe src="http://localhost:5000">` | El navegador se niega a mostrar el sitio |
+| CSRF | Cambiar el `csrf_token` del login y borrar el `<meta name="csrf-token">` en `/reservar` | Mensaje de error en ambos casos |
+| Fuerza bruta | 6 logins fallidos seguidos | Mensaje de demasiados intentos (429) |
+| XSS | Registrarse con el nombre `<script>alert(1)</script>` | Se muestra como texto, sin ejecutarse |
+| Sesiones | Reservar y verla en Mis reservas; salir y entrar a `/mis-reservas` | Pide iniciar sesión |
+| Búsqueda por voz | Usar el micrófono con la cabecera `Permissions-Policy` activa | Sigue funcionando |
