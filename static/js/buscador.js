@@ -44,6 +44,7 @@ const complejos = [...grilla.querySelectorAll(".complejo")].map((elemento, posic
 // 4) Lee los filtros, decide qué tarjetas se ven y en qué orden.
 function aplicarFiltros() {
   const texto = normalizar(campoTexto.value);
+  const palabras = texto.split(/\s+/).filter(Boolean);  // "techadas heras" → ["techadas", "heras"]
   const zona = selectZona.value;               // "" significa "Todas"
   const precioMaximo = Number(rangoPrecio.value);
   const orden = selectOrden.value;
@@ -52,10 +53,9 @@ function aplicarFiltros() {
 
   // a) Filtrar: se queda con los que cumplen las TRES condiciones.
   const visibles = complejos.filter((c) => {
-    const coincideTexto = texto === "" ||
-                          c.nombre.includes(texto) ||
-                          c.caracteristicas.includes(texto) ||
-                          normalizar(c.zona).includes(texto);
+    // Cada palabra tiene que aparecer en el nombre, las características o la zona.
+    const coincideTexto = palabras.every((p) =>
+      c.nombre.includes(p) || c.caracteristicas.includes(p) || normalizar(c.zona).includes(p));
     const coincideZona = zona === "" || c.zona === zona;
     const entraEnPrecio = c.precio <= precioMaximo;
     return coincideTexto && coincideZona && entraEnPrecio;
@@ -117,6 +117,7 @@ const PALABRAS_DE_RELLENO = [
   "hasta", "menos", "mas", "maximo", "pesos", "hora", "precio", "mil",
   "barata", "baratas", "barato", "baratos", "economica", "economicas",
   "cara", "caras", "caro", "caros",
+  "favor", "porfa", "algo", "alguna", "alguno", "me", "gustaria",
 ];
 
 function interpretar(frase) {
@@ -133,8 +134,9 @@ function interpretar(frase) {
   }
 
   // b) PRECIO: "hasta 18 mil", "menos de 18000", "18.000".
-  //    Primero juntamos "18.000" o "18,000" en "18000".
-  resto = resto.replace(/(\d)[.,](\d{3})/g, "$1$2");
+  //    Primero juntamos los miles ("18.000", "18,000" o "18 000" → "18000") y sacamos el $.
+  resto = resto.replace(/(\d)[.,\s](\d{3})\b/g, "$1$2");  // 17.000 / 17,000 / 17 000 → 17000
+  resto = resto.replace(/[^a-z0-9ñ\s]/g, " ");           // saca $, signos y puntuación
   const precio = resto.match(/\b(\d+)\s*(mil)?\b/);
   let numero = precio ? Number(precio[1]) * (precio[2] ? 1000 : 1) : 0;
   if (numero >= 1000) {

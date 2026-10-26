@@ -25,6 +25,10 @@
 
       {# [GON] Buscador y filtros. La lógica está en js/buscador.js. #}
       {% set precios = complejos|map(attribute='precio_hora')|list %}
+      {# El rango va de a 500: redondeamos el mínimo para abajo y el máximo para
+      arriba, así todos los precios entran en un paso y nadie queda oculto. #}
+      {% set precio_min = (precios|min // 500) * 500 %}
+      {% set precio_max = ((precios|max + 499) // 500) * 500 %}
       <form class="buscador" id="buscador" role="search">
 
         <div class="campo buscador-texto">
@@ -46,8 +50,8 @@
         </div>
 
         <div class="campo">
-          <label for="filtro-precio">Hasta $ <output id="valor-precio" for="filtro-precio">{{ "{:,}".format(precios|max).replace(",", ".") }}</output></label>
-          <input type="range" id="filtro-precio" min="{{ precios|min }}" max="{{ precios|max }}" step="500" value="{{ precios|max }}">
+          <label for="filtro-precio">Hasta $ <output id="valor-precio" for="filtro-precio">{{ "{:,}".format(precio_max).replace(",", ".") }}</output></label>
+          <input type="range" id="filtro-precio" min="{{ precio_min }}" max="{{ precio_max }}" step="500" value="{{ precio_max }}">
         </div>
 
         <div class="campo">
